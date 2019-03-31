@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <!--android:fitsSystemWindows="true"-->
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:contentScrim="@color/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="204dp"
+                app:layout_collapseMode="parallax"
+                android:background="@drawable/song_list_background">
+
+                <ImageView
+                    android:id="@+id/song_list_image"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintVertical_bias="0.55"/>
+
+                <TextView
+                    android:id="@+id/song_list_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@+id/song_list_image"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/song_list_image"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="A"
+                    android:textSize="16sp"
+                    android:textColor="#E4E3E3"/>
+
+                <TextView
+                    android:id="@+id/author_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/song_list_name"
+                    app:layout_constraintLeft_toLeftOf="@+id/song_list_name"
+                    android:text="作者："
+                    android:textSize="14sp"
+                    android:textColor="#ffffff"/>
+
+                <TextView
+                    android:id="@+id/song_list_author"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@+id/author_temp"
+                    app:layout_constraintTop_toTopOf="@+id/author_temp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:maxLines="1"
+                    android:layout_marginRight="30dp"
+                    android:text="Ax"
+                    android:ellipsize="end"
+                    android:textSize="14sp"
+                    android:textColor="#ffffff"/>
+
+                <TextView
+                    android:id="@+id/introduce_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@+id/author_temp"
+                    app:layout_constraintLeft_toLeftOf="@+id/author_temp"
+                    android:text="简介："
+                    android:textSize="12sp"
+                    android:textColor="#ffffff"/>
+
+                <TextView
+                    android:id="@+id/song_list_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@+id/introduce_temp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/introduce_temp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginRight="30dp"
+                    android:text="www"
+                    android:textSize="12sp"
+                    android:textColor="#ffffff"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/play_all"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:background="#ffffff">
+
+            <ImageView
+                android:id="@+id/play_all_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="8dp"
+                android:src="@drawable/play"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toRightOf="@+id/play_all_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginLeft="8dp"
+                android:text="全部播放"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toRightOf="@+id/play"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="(@string/int_count)"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="#CECBCB"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:focusableInTouchMode="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/song_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:nestedScrollingEnabled="false"
+            android:descendantFocusability="blocksDescendants"/>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
