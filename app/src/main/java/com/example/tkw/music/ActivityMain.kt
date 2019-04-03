@@ -9,6 +9,7 @@ import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -26,6 +27,8 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
     private lateinit var myService: MyService
     private var isBindService = false
 
+    private var view:View? = null
+
     private lateinit var localBroadcastManager:LocalBroadcastManager
 
     private var playList:List<SongData> ? = null
@@ -34,12 +37,18 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
     private lateinit var musicPlay:RelativeLayout
     private lateinit var songImage:ImageView
     private lateinit var songName:TextView
-    private lateinit var songWord:TextView
+    //    private lateinit var songWord:TextView
     private lateinit var songState:ImageView
+    private var isFirst = true
+
+    private val notional = SongData("004eEyQ52F2ukc","https://api.bzqll.com/music/tencent/lrc?id=004eEyQ52F2ukc&key=579621905"
+            ,"中华人民共和国国歌-义勇军进行曲","https://api.bzqll.com/music/tencent/pic?id=004eEyQ52F2ukc&key=579621905"
+            ,"群星",132,"https://api.bzqll.com/music/tencent/url?id=004eEyQ52F2ukc&key=579621905")
 
     private var isPause = false
 
     private val localReceiver = object :BroadcastReceiver(){
+
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action){
                 "playThis" ->  playSong(position)
@@ -53,14 +62,19 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
                 "previousMusic" -> playPrevious() //通知栏上一首
                 "nextMusic" -> playNext()          //通知栏下一首
                 "musicFinished" -> playNext()      //通知栏播放完毕
-                "beginPlay" ->  {
-                    songState.setImageResource(R.drawable.pause)
-                    myService.MusicBinder().play()
+                "playChange" ->  {
+                    val state =  intent.getBooleanExtra("isPause",false)
+                    Log.d("isPause",state.toString())
+                    if(state){
+                        songState.setImageResource(R.drawable.pause)
+                        myService.MusicBinder().play()
+                    }else{
+                        songState.setImageResource(R.drawable.play)
+                        myService.MusicBinder().pause()
+                    }
+
                 }
-                "beginPause" -> {
-                    songState.setImageResource(R.drawable.play)
-                    myService.MusicBinder().pause()
-                }
+
             }
         }
     }
@@ -68,14 +82,19 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.song_state ->
-                if(isPause){
-                    songState.setImageResource(R.drawable.pause)
-                    myService.MusicBinder().play()
-                    isPause = false
+                if(isFirst){
+                    playSong()
+                    isFirst = false
                 }else{
-                    songState.setImageResource(R.drawable.play)
-                    myService.MusicBinder().pause()
-                    isPause = true
+                    if(isPause){
+                        songState.setImageResource(R.drawable.pause)
+                        myService.MusicBinder().play()
+                        isPause = false
+                    }else{
+                        songState.setImageResource(R.drawable.play)
+                        myService.MusicBinder().pause()
+                        isPause = true
+                    }
                 }
         }
     }
@@ -130,11 +149,11 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         musicPlay = findViewById(R.id.music_play)
         songImage = findViewById(R.id.song_image)
         songName = findViewById(R.id.song_name)
-        songWord = findViewById(R.id.song_word)
+//        songWord = findViewById(R.id.song_word)
         songState = findViewById(R.id.song_state)
     }
 
-    public fun playNext(){
+    fun playNext(){
         if(playList != null){
             if(position != playList!!.size - 1){
                 position += 1
@@ -148,7 +167,7 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         }
     }
 
-    public fun playPrevious(){
+    fun playPrevious(){
         if(playList != null){
             if(position != 0){
                 position -= 1
@@ -164,20 +183,24 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
 
     private fun playSong(ps:Int){
         if(playList != null){
-            var bitmap:Bitmap
-            playList!![ps].apply {
-                JSONToByteArray.sendRequest(pic){
-                    bitmap = ImageCondense.condenseFromInputStream(it)
-                    myService.play(url,name,singer,bitmap)
-                    Handler(Looper.getMainLooper()).post {
-                        songImage.setImageBitmap(bitmap)
-                        songName.text = name
-                        songState.setImageResource(R.drawable.pause)
-                    }
+            playSong(playList!![ps])
+        }
+    }
+
+    private fun playSong(songData: SongData = notional){
+        var bitmap:Bitmap
+        songData.apply {
+            JSONToByteArray.sendRequest(pic){
+                bitmap = ImageCondense.condenseFromInputStream(it)
+                myService.MusicBinder().playMusic(url,name,singer,bitmap)
+                Handler(Looper.getMainLooper()).post {
+                    songImage.setImageBitmap(bitmap)
+                    songName.text = name
+                    songState.setImageResource(R.drawable.pause)
                 }
             }
-            isPause = false
         }
+        isPause = false
     }
 
     override fun onDestroy() {
@@ -213,15 +236,18 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
      * 切换fragment
      */
     private fun init(){
-        replaceFragment(R.id.frame_layout_fragment,FragmentHomePage())
+        toFragment(R.id.frame_layout_fragment,FragmentHomePage(),false)
     }
 
-    private fun replaceFragment(id:Int,fragment: Fragment){
-        supportFragmentManager.beginTransaction().apply {
+    fun toFragment(id:Int,fragment: Fragment,isAddStack:Boolean){
+
+        supportFragmentManager.beginTransaction().apply{
             replace(id,fragment)
+            if (isAddStack)addToBackStack(null)
             commit()
         }
     }
+
 
     /**
      * recycler后期

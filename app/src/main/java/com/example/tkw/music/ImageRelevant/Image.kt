@@ -1,3 +1,8 @@
 package com.example.tkw.music.ImageRelevant
+data class Image(
+    val results: List<Result>
+)
 
-data class Image(val url:String)
+data class Result(
+    val url: String
+)

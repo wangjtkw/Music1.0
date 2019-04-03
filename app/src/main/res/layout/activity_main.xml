@@ -36,19 +36,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/song_image"
-            android:layout_alignTop="@+id/song_image"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
             android:text="绝代风华"
             android:textColor="#000000"/>
 
-        <TextView
-            android:id="@+id/song_word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/song_image"
-            android:layout_alignBottom="@+id/song_image"
-            android:layout_marginLeft="8dp"
-            android:text="我不是 也不想"/>
+        <!--<TextView-->
+            <!--android:id="@+id/song_word"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toRightOf="@+id/song_image"-->
+            <!--android:layout_alignBottom="@+id/song_image"-->
+            <!--android:layout_marginLeft="8dp"-->
+            <!--android:text="我不是 也不想"/>-->
 
         <ImageView
             android:id="@+id/song_state"

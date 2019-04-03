@@ -9,7 +9,7 @@ import com.example.tkw.music.SongData
 import com.example.tkw.music.holder.EmptyHolder
 import com.example.tkw.music.holder.SongHolder
 
-class SongAdapter(private var songList:List<SongData>, private val context: Context?,private val callback:(songList:List<SongData>,position:Int) ->Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class SongAdapter(private var songList:List<SongData>, private val context: Context?,private val callback:CallBackSong):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     companion object {
         private const val FOOT_TYPE = 1
@@ -21,12 +21,12 @@ class SongAdapter(private var songList:List<SongData>, private val context: Cont
             return EmptyHolder(view)
         } else {
             val view = LayoutInflater.from(p0.context).inflate(R.layout.song_item, p0, false)
-            val holder = SongHolder(view)
-            holder.songItem.setOnClickListener {
-                callback(songList, holder.adapterPosition)
-            }
-            return holder
+            return SongHolder(view)
         }
+    }
+
+    interface CallBackSong{
+        fun getSong(songList:List<SongData>,position:Int)
     }
 
     override fun getItemCount(): Int {
@@ -35,6 +35,9 @@ class SongAdapter(private var songList:List<SongData>, private val context: Cont
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is SongHolder){
+            holder.songItem.setOnClickListener {
+                callback.getSong(songList, holder.adapterPosition)
+            }
             setSongList(holder,position)
         }
     }

@@ -1,9 +1,7 @@
 package com.example.tkw.music
 
-import android.util.Log
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 /**
  * 对链接进行加密
@@ -18,14 +16,13 @@ object MD5Helper{
             md5.update(url?.toByteArray())
             val byteArray = md5.digest()
             cacheKey = BigInteger(1,byteArray).toString(16)
-        } catch (e: NoSuchAlgorithmException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             cacheKey = url?.hashCode().toString()
         }
         for (i in 0 until 32 - cacheKey.length){
             cacheKey = "0$cacheKey"
         }
-        Log.d("aaa",cacheKey)
         return cacheKey
     }
 

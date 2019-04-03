@@ -1,4 +1,4 @@
-package com.example.tkw.music
+package com.example.tkw.music.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,16 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.example.tkw.music.ImageRelevant.Image
 import com.example.tkw.music.ImageRelevant.LoadImage
+import com.example.tkw.music.ImageRelevant.Result
+import com.example.tkw.music.R
 
-class ImageAdapter( private var imageList:List<Image>,private val context: Context?):RecyclerView.Adapter<ImageAdapter.ViewHolder>(){
+class ImageAdapter( private var imageList:List<Result>,private val context: Context?):RecyclerView.Adapter<ImageAdapter.ViewHolder>(){
 
     inner class ViewHolder(view:View):RecyclerView.ViewHolder(view){
-        var imageView:ImageView
-        init {
-            imageView = view.findViewById(R.id.image_item) as ImageView
-        }
+        var imageView:ImageView = view.findViewById(R.id.image_item) as ImageView
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
@@ -25,7 +23,7 @@ class ImageAdapter( private var imageList:List<Image>,private val context: Conte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(context != null){
-            LoadImage.loadImage(context,imageList.get(position).url){
+            LoadImage.loadImage(context, imageList[position].url){
                 holder.imageView.setImageBitmap(it)
             }
         }else{
@@ -36,9 +34,5 @@ class ImageAdapter( private var imageList:List<Image>,private val context: Conte
         override fun getItemCount(): Int {
             return imageList.size
         }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
 }
 

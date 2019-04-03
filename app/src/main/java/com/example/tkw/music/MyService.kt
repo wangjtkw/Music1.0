@@ -1,5 +1,7 @@
 package com.example.tkw.music
 
+import android.annotation.TargetApi
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
@@ -8,9 +10,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import android.widget.RemoteViews
 
 class MyService : Service() {
@@ -38,28 +42,36 @@ class MyService : Service() {
     private val mediaPlayer = MediaPlayer()
     private val musicBinder = MusicBinder()
     private var isSetData:Boolean = false
+    private lateinit var playChangePendingIntent:PendingIntent
 
 
     override fun onCreate() {
         super.onCreate()
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val channelId = "Music"
+            val channelName = "音乐播放"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT;
+            createNotificationChannel(channelId,channelName,importance)
+        }
         val intent = Intent(this,ActivityMain::class.java)
         val contentPendingIntent = PendingIntent.getActivity(this, CONNECT_PENDINGINTENT_REQUEST,intent,PendingIntent.FLAG_UPDATE_CURRENT)
         val delIntent = Intent(this,MyService::class.java)
         val delPendingIntent = PendingIntent.getService(this, DELETE_PENDINGINTENT_REQUEST,delIntent,PendingIntent.FLAG_UPDATE_CURRENT)
 
+
         remoteViews = RemoteViews(packageName,R.layout.notification)
-        builder = NotificationCompat.Builder(this)
+        builder = NotificationCompat.Builder(this,"Music")
                 .setSmallIcon(R.drawable.next)
                 .setAutoCancel(false)
                 .setContentIntent(contentPendingIntent)
                 .setDeleteIntent(delPendingIntent)
                 .setCustomContentView(remoteViews)
-
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         startForeground(NOTIFICATION_PENDINGINTENT_ID,builder.build())
-
-
+        val playIntent = Intent("playChange")
+        playIntent.putExtra("isPause",isPause)
+        playChangePendingIntent = PendingIntent.getBroadcast(this, PLAY_PENDINGINTENT_REQUEST,playIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        remoteViews.setOnClickPendingIntent(R.id.notify_play,playChangePendingIntent)
 
         val previousIntent = Intent("previousMusic")
         val previousPendingIntent = PendingIntent.getBroadcast(this, PREVIOUS_PENDINGINTENT_REQUEST,previousIntent,PendingIntent.FLAG_UPDATE_CURRENT)
@@ -69,23 +81,21 @@ class MyService : Service() {
         val nextPendingIntent = PendingIntent.getBroadcast(this, NEXT_PENDINGINTENT_REQUEST,nextIntent,PendingIntent.FLAG_UPDATE_CURRENT)
         remoteViews.setOnClickPendingIntent(R.id.notify_next,nextPendingIntent)
 
-        val playChangeIntent:Intent
-        val playChangePendingIntent:PendingIntent
-        if(isPause){
-            playChangeIntent = Intent("beginPlay")
-            playChangePendingIntent = PendingIntent.getBroadcast(this, PLAY_PENDINGINTENT_REQUEST,playChangeIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-        }else{
-            playChangeIntent = Intent("beginPause")
-            playChangePendingIntent = PendingIntent.getBroadcast(this, PAUSE_PENDINGINTENT_REQUEST,playChangeIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-        remoteViews.setOnClickPendingIntent(R.id.notify_play,playChangePendingIntent)
-
         val closeIntent = Intent("closeMusic")
         val closePendingIntent = PendingIntent.getBroadcast(this, CLOSE_PENDINGINTENT_REQUEST,closeIntent,PendingIntent.FLAG_UPDATE_CURRENT)
         remoteViews.setOnClickPendingIntent(R.id.notify_close,closePendingIntent)
 
-
         initMediaPlayer()
+    }
+
+
+
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(channelId:String,channelName: String,importance:Int){
+        val channel = NotificationChannel(channelId,channelName,importance)
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun initMediaPlayer(){
@@ -101,23 +111,6 @@ class MyService : Service() {
         mediaPlayer.setOnCompletionListener {
             val finishIntent = Intent("musicFinished")
             sendBroadcast(finishIntent)
-        }
-    }
-
-    fun play(path:String,songName:String,songAuthor:String,bitmap: Bitmap){
-        try {
-            if (isPause!!){
-                mediaPlayer.start()
-                isPause = false
-            }else{
-                mediaPlayer.reset()
-                mediaPlayer.setDataSource(path)
-                mediaPlayer.prepareAsync()
-                isPause = false
-            }
-            updateNotification(songName,songAuthor,bitmap)
-        }catch (e:Exception){
-            e.printStackTrace()
         }
     }
 
@@ -161,6 +154,7 @@ class MyService : Service() {
             remoteViews.setImageViewResource(R.id.notify_play,R.drawable.notify_pause)
             notificationManager.notify(NOTIFICATION_PENDINGINTENT_ID,builder.build())
             isPause = false
+            Log.d("play",isPause.toString())
         }
 
         fun pause(){
@@ -168,6 +162,25 @@ class MyService : Service() {
             remoteViews.setImageViewResource(R.id.notify_play,R.drawable.notify_start)
             notificationManager.notify(NOTIFICATION_PENDINGINTENT_ID,builder.build())
             isPause = true
+            Log.d("pause",isPause.toString())
+        }
+
+        fun playMusic(path:String,songName:String,songAuthor:String,bitmap: Bitmap){
+            try {
+                if (isPause){
+                    mediaPlayer.start()
+                    isPause = false
+                }else{
+                    mediaPlayer.reset()
+                    mediaPlayer.setDataSource(path)
+                    mediaPlayer.prepareAsync()
+                    isPause = false
+                    Log.d("playMusic",isPause.toString())
+                }
+                updateNotification(songName,songAuthor,bitmap)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
         //歌曲时长
         fun getDuration():Int{

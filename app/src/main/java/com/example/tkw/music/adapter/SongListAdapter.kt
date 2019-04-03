@@ -1,6 +1,7 @@
 package com.example.tkw.music.adapter
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.support.v7.widget.RecyclerView
@@ -12,7 +13,8 @@ import com.example.tkw.music.SongListTransform
 import com.example.tkw.music.holder.EmptyHolder
 import com.example.tkw.music.holder.SongListHolder
 
-class SongListAdapter(private var songListList:List<SongListTransform>, private val context: Context?, private val callback:(id:String)->Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class SongListAdapter(private var songListList:List<SongListTransform>, private val context: Context?, private val callBack:CallBackId):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
 
     companion object {
         private const val FOOT_TYPE = 1
@@ -25,12 +27,6 @@ class SongListAdapter(private var songListList:List<SongListTransform>, private 
         } else{
             val view = LayoutInflater.from(p0.context).inflate(R.layout.song_list_item,p0,false)
             val holder = SongListHolder(view)
-            holder.songListItem1.setOnClickListener {
-                callback(songListList[holder.adapterPosition].id1)
-            }
-            holder.songListItem2.setOnClickListener {
-                callback(songListList[holder.adapterPosition].id2)
-            }
             return holder
         }
     }
@@ -45,30 +41,42 @@ class SongListAdapter(private var songListList:List<SongListTransform>, private 
                 setSongList(holder,position)
             }else{
                 Handler(Looper.getMainLooper()).post {
-                    setSongList(holder,position)
+                    setSongList(holder, position)
                 }
             }
             if(context != null){
                 holder.songListImage1.tag = songListList[position].pic1
                 holder.songListImage2.tag = songListList[position].pic2
-                LoadImage.loadImage(context, songListList[position].pic1){
+                LoadImage.loadImage(context, songListList[position].pic1){bitmap ->
+                    holder.songListItem1.setOnClickListener {
+                        callBack.getId(songListList[position].id1,bitmap)
+                    }
                     holder.songListImage1.apply {
                         if(tag == songListList[position].pic1)
                         {
-                            setImageBitmap(it)
+                            setImageBitmap(bitmap)
                         }
                     }
                 }
-                LoadImage.loadImage(context, songListList[position].pic2){
+                LoadImage.loadImage(context, songListList[position].pic2){bitmap ->
+                    holder.songListItem2.setOnClickListener {
+                        callBack.getId(songListList[position].id2,bitmap)
+                    }
                     holder.songListImage2.apply {
                         if(tag == songListList[position].pic2){
-                            setImageBitmap(it)
+                            setImageBitmap(bitmap)
                         }
                     }
-
                 }
             }
+
+
+
         }
+    }
+
+    interface CallBackId{
+        fun getId(id:String,bitmap:Bitmap)
     }
 
     override fun getItemViewType(position: Int): Int {
