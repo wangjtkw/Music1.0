@@ -1,8 +1,8 @@
 package com.example.tkw.music.Listener
 
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 
-class ViewPagerChangeListener():ViewPager.OnPageChangeListener{
+class ViewPagerChangeListener(): androidx.viewpager.widget.ViewPager.OnPageChangeListener{
     override fun onPageScrollStateChanged(p0: Int) {
 
     }

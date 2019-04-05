@@ -2,7 +2,9 @@ package com.example.tkw.music
 
 class SongListUtil{
 
-    fun getSongList(url:String,callback:(List<SongListTransform>)->Unit){
+    private val url_ = "https://api.bzqll.com/music/tencent/hotSongList?key=579621905&categoryId=10000000&sortId=3&limit=60"
+
+    fun getSongList(url:String = url_,callback:(List<SongListTransform>)->Unit){
         JSONToByteArray.sendRequest(url){
             Analyse.analyse<HotSongList>(it){ hotSongList ->
                 songListTransform(hotSongList){songListTransform ->

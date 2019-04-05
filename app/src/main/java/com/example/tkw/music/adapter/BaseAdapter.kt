@@ -2,11 +2,11 @@ package com.example.tkw.music.adapter
 
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.example.tkw.music.holder.BaseHolder
 
-open class BaseAdapter<T>(val onCreateViewHolderHandler:(p0: ViewGroup, p1: Int)->BaseHolder):RecyclerView.Adapter<BaseHolder>(){
+open class BaseAdapter<T>(val onCreateViewHolderHandler:(p0: ViewGroup, p1: Int)->BaseHolder): androidx.recyclerview.widget.RecyclerView.Adapter<BaseHolder>(){
 
     protected val list = ArrayList<T>()
     protected val handler = Handler(Looper.getMainLooper())

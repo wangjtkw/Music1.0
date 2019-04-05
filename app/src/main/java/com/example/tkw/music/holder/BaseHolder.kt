@@ -1,9 +1,8 @@
 package com.example.tkw.music.holder
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 
-abstract class BaseHolder(view: View):RecyclerView.ViewHolder(view){
+abstract class BaseHolder(view: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
 
     protected val context = view.context!!
     protected var event:((any:Any?)->Boolean) ? = null

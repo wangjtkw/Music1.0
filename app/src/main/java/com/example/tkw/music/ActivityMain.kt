@@ -6,30 +6,27 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.support.v4.app.Fragment
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.tkw.music.ImageRelevant.ImageCondense
-import com.example.tkw.music.ImageRelevant.ImageUrl
-import com.example.tkw.music.adapter.BaseAdapter
-import com.example.tkw.music.holder.ViewHolder
-
 
 
 class ActivityMain : AppCompatActivity(),View.OnClickListener{
 
     private lateinit var myService: MyService
     private var isBindService = false
+    private lateinit var navController: NavController
+
 
     private var view:View? = null
 
-    private lateinit var localBroadcastManager:LocalBroadcastManager
+    private lateinit var localBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager
 
     private var playList:List<SongData> ? = null
     private var position = -1
@@ -48,7 +45,6 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
     private var isPause = false
 
     private val localReceiver = object :BroadcastReceiver(){
-
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action){
                 "playThis" ->  playSong(position)
@@ -60,23 +56,27 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action){
                 "previousMusic" -> playPrevious() //通知栏上一首
-                "nextMusic" -> playNext()          //通知栏下一首
+                "playChanged" -> playChange()
                 "musicFinished" -> playNext()      //通知栏播放完毕
-                "playChange" ->  {
-                    val state =  intent.getBooleanExtra("isPause",false)
-                    Log.d("isPause",state.toString())
-                    if(state){
-                        songState.setImageResource(R.drawable.pause)
-                        myService.MusicBinder().play()
-                    }else{
-                        songState.setImageResource(R.drawable.play)
-                        myService.MusicBinder().pause()
-                    }
+                "nextMusic" -> playNext()          //通知栏下一首
 
-                }
 
             }
         }
+    }
+
+    fun playChange(){
+        Log.d("isPause","aaaa")
+       //val state =  intent.getBooleanExtra("isPause",false)
+
+        //Log.d("isPause",state.toString())
+//        if(state){
+//            songState.setImageResource(R.drawable.pause)
+//            myService.MusicBinder().play()
+//        }else{
+//            songState.setImageResource(R.drawable.play)
+//            myService.MusicBinder().pause()
+//        }
     }
 
     override fun onClick(v: View?) {
@@ -114,14 +114,7 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //*************
-        adapter.clickEvent {
-            true
-        }
-        adapter.notifyDataChange(ArrayList())
-        //****************
-        init()
-        //**********
+        navController = Navigation.findNavController(this,R.id.main_fragment)
         initView()
         bindService()
         startMusicService()
@@ -132,13 +125,16 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         intentFilter.addAction("beginPlay")
         intentFilter.addAction("beginPause")
         registerReceiver(playerReceiver,intentFilter)
-        localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        localBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
         val localIntentFilter = IntentFilter()
         localIntentFilter.addAction("playThis")
         localBroadcastManager.registerReceiver(localReceiver,localIntentFilter)
         songState.setOnClickListener(this)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp()
+    }
     private fun startMusicService(){
         val intent = Intent(this@ActivityMain, MyService::class.java)
         //传状态给service
@@ -210,7 +206,7 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         unBind()
     }
 
-    public fun setData(songData:List<SongData>, position:Int){
+    fun setData(songData:List<SongData>, position:Int){
         this.position = position
         this.playList = songData
     }
@@ -232,30 +228,6 @@ class ActivityMain : AppCompatActivity(),View.OnClickListener{
         }
     }
 
-    /**
-     * 切换fragment
-     */
-    private fun init(){
-        toFragment(R.id.frame_layout_fragment,FragmentHomePage(),false)
-    }
-
-    fun toFragment(id:Int,fragment: Fragment,isAddStack:Boolean){
-
-        supportFragmentManager.beginTransaction().apply{
-            replace(id,fragment)
-            if (isAddStack)addToBackStack(null)
-            commit()
-        }
-    }
-
-
-    /**
-     * recycler后期
-     */
-    private val adapter = BaseAdapter<ImageUrl>{parent,viewType->
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.image_item,parent,false)
-        ViewHolder(view)
-    }
 
 
 }

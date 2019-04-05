@@ -13,9 +13,9 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 
 class MyService : Service() {
 
@@ -42,7 +42,6 @@ class MyService : Service() {
     private val mediaPlayer = MediaPlayer()
     private val musicBinder = MusicBinder()
     private var isSetData:Boolean = false
-    private lateinit var playChangePendingIntent:PendingIntent
 
 
     override fun onCreate() {
@@ -66,11 +65,17 @@ class MyService : Service() {
                 .setAutoCancel(false)
                 .setContentIntent(contentPendingIntent)
                 .setDeleteIntent(delPendingIntent)
-                .setCustomContentView(remoteViews)
+                .setCustomBigContentView(remoteViews)
+
         startForeground(NOTIFICATION_PENDINGINTENT_ID,builder.build())
-        val playIntent = Intent("playChange")
-        playIntent.putExtra("isPause",isPause)
-        playChangePendingIntent = PendingIntent.getBroadcast(this, PLAY_PENDINGINTENT_REQUEST,playIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+
+//        val playIntent = Intent("playChange")
+//        //playIntent.putExtra("isPause",isPause)
+//        val playChangePendingIntent = PendingIntent.getBroadcast(this, PLAY_PENDINGINTENT_REQUEST,playIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+//        remoteViews.setOnClickPendingIntent(R.id.notify_play,playChangePendingIntent)
+
+        val playIntent = Intent("playChanged")
+        val playChangePendingIntent = PendingIntent.getBroadcast(this, PLAY_PENDINGINTENT_REQUEST,playIntent,PendingIntent.FLAG_UPDATE_CURRENT)
         remoteViews.setOnClickPendingIntent(R.id.notify_play,playChangePendingIntent)
 
         val previousIntent = Intent("previousMusic")

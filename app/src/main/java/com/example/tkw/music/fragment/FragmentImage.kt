@@ -1,22 +1,20 @@
-package com.example.tkw.music
+package com.example.tkw.music.fragment
 
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.tkw.music.ImageRelevant.ImageUrl
 import com.example.tkw.music.ImageRelevant.Result
+import com.example.tkw.music.R
 import com.example.tkw.music.adapter.ImageAdapter
 
-class FragmentImage: Fragment(){
+class FragmentImage: androidx.fragment.app.Fragment(){
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
     private val imageUrl = ImageUrl()
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var adapter: ImageAdapter
@@ -42,7 +40,7 @@ class FragmentImage: Fragment(){
 
     private fun setRecyclerView(view: View){
         recyclerView = view.findViewById(R.id.image_recycler)
-        recyclerView.layoutManager = LinearLayoutManager(view.context,LinearLayoutManager.HORIZONTAL,false)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
         adapter = ImageAdapter(imageList = imagesArray, context = view.context)
         recyclerView.adapter = adapter
         imageUrl.getUrl { images ->

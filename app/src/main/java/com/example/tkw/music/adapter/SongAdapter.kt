@@ -1,7 +1,7 @@
 package com.example.tkw.music.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.tkw.music.R
@@ -9,13 +9,13 @@ import com.example.tkw.music.SongData
 import com.example.tkw.music.holder.EmptyHolder
 import com.example.tkw.music.holder.SongHolder
 
-class SongAdapter(private var songList:List<SongData>, private val context: Context?,private val callback:CallBackSong):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class SongAdapter(private var songList:List<SongData>, private val context: Context?,private val callback:CallBackSong): androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>(){
 
     companion object {
         private const val FOOT_TYPE = 1
     }
 
-    override fun onCreateViewHolder(p0: ViewGroup, type: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(p0: ViewGroup, type: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         if (type == SongAdapter.FOOT_TYPE){
             val view = LayoutInflater.from(p0.context).inflate(R.layout.z_blank_view,p0,false)
             return EmptyHolder(view)
@@ -33,7 +33,7 @@ class SongAdapter(private var songList:List<SongData>, private val context: Cont
         return songList.size + 1
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is SongHolder){
             holder.songItem.setOnClickListener {
                 callback.getSong(songList, holder.adapterPosition)

@@ -1,7 +1,7 @@
 package com.example.tkw.music.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +10,9 @@ import com.example.tkw.music.ImageRelevant.LoadImage
 import com.example.tkw.music.ImageRelevant.Result
 import com.example.tkw.music.R
 
-class ImageAdapter( private var imageList:List<Result>,private val context: Context?):RecyclerView.Adapter<ImageAdapter.ViewHolder>(){
+class ImageAdapter( private var imageList:List<Result>,private val context: Context?): androidx.recyclerview.widget.RecyclerView.Adapter<ImageAdapter.ViewHolder>(){
 
-    inner class ViewHolder(view:View):RecyclerView.ViewHolder(view){
+    inner class ViewHolder(view:View): androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
         var imageView:ImageView = view.findViewById(R.id.image_item) as ImageView
     }
 
